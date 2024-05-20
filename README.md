@@ -43,7 +43,7 @@ This command shows how to get help using the prgram.
 
 ### Example 2
 
-This command specifies to download an updated DMR ID user database and then create export for region 2 (Europe). File format will be for default traceiver type (AnyTone D878/D578).
+This command specifies to download an updated DMR ID user database and then create export for region 2 (Europe). File format will be for default traceiver type (AnyTone D878/D578) and the file will be named "users-anytone.csv".
 
     >python3 dmridget.py -d -r 2
 
@@ -55,7 +55,7 @@ This command specifies to download an updated DMR ID user database and then crea
 
 ### Example 3
 
-This command specifies to create export for region 2 (Europe). Country 302 (Canada) will also be added to the collection, but Norway will ble excluded. File format will be for default traceiver type (AnyTone D878/D578).
+This command specifies to create export for region 2 (Europe). Country 302 (Canada) will also be added to the collection, but Norway will ble excluded. File format will be for default traceiver type (AnyTone D878/D578) and the file will be named "users-anytone.csv".
 
     >python3 dmridget.py -r 2 -c 302 -274
 
@@ -67,7 +67,7 @@ This command specifies to create export for region 2 (Europe). Country 302 (Cana
 
 ### Example 4
 
-This command specifies to create export for region 1, 2 and 3. File format will be for default traceiver type (AnyTone D878/D578).
+This command specifies to create export for region 1, 2 and 3. File format will be for default traceiver type (AnyTone D878/D578) and the file will be named "users-anytone.csv".
 
     >python3 dmridget.py -r 1 2 3
 

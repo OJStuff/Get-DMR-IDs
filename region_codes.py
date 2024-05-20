@@ -4,7 +4,7 @@
 DMR_RC = {
     # Mobile region codes: https://en.wikipedia.org/wiki/Mobile_country_code
     0: "Test networks",
-    1: "North America and Canada (DMARC)",
+    1: "North America and Canada",
     2: "Europe",
     3: "North America and the Caribbean",
     4: "Asia and the Middle East",

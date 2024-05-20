@@ -1,7 +1,7 @@
 """
 Environment: Thonny IDE v4.1.4 and builtin Python v3.10.11.
 Copyright: Released under CC BY-SA 4.0
-Author: GitHub/OJStuff, May xx, 2024, v1.0
+Author: GitHub/OJStuff, May 20, 2024, v1.0
 """
 
 import sys
