@@ -57,7 +57,7 @@ This command specifies to download an updated DMR ID user database and then crea
 
 This command specifies to create export for region 2 (Europe). Country 302 (Canada) will also be added to the collection, but Norway will ble excluded. File format will be for default traceiver type (AnyTone D878/D578) and the file will be named "users-anytone.csv".
 
-    >python3 dmridget.py -r 2 -c 302 -274
+    >python3 dmridget.py -r 2 -c 302 -242
 
     options specified for production of the export file:
     -r 2 include region: Europe
