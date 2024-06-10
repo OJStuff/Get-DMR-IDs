@@ -4,7 +4,7 @@ This program is intended for radio amateur use. It runs from the command-line, a
 
 ## Program
 
-Downloaded data from [radioid.net](https:/radioid.net) (users.json) comes in json file format. The program uses country codes from the file [country_codes.py](country_codes.py) and region codes from the file [region_codes.py](region_codes.py) to identify selected regions and countries for export.
+Downloaded data from [radioid.net](https://radioid.net) (users.json) comes in json file format. The program uses country codes from the file [country_codes.py](country_codes.py) and region codes from the file [region_codes.py](region_codes.py) to identify selected regions and countries for export.
 
 If you want to view a list of all available region codes, then try this shell command at the program location:
 
