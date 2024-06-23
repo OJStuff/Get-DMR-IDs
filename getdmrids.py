@@ -1,7 +1,7 @@
 """
 Environment: Thonny IDE v4.1.4 and builtin Python v3.10.11.
 Copyright: Released under CC BY-SA 4.0
-Author: GitHub/OJStuff, June 10, 2024, v1.1
+Author: GitHub/OJStuff, June 23, 2024, v1.2
 """
 
 import sys
@@ -92,26 +92,26 @@ def urlExist(url: str) -> bool:
 
 def urlLoad(file: str, url: str, info: bool) -> bool:
     """
-    Download file from url in blocks of 1024 bytes
+    Download file from url in chunks of 1024 bytes
     Args:
         file: Local filname
         url: Url to download
-        info: True if info about downloaded kB will be shown
+        info: True if info about downloaded size be shown
     Returns:
         None
     """
     try:
         status: bool = True
-        count: int = 0
         r = requests.get(url, timeout=5)
         with open(file, "wb") as f:
-            for block in r.iter_content(1024):
+            count: int = 0
+            chunk_size: int = 1024
+            for block in r.iter_content(chunk_size=chunk_size):
                 f.write(block)
                 count += 1
             f.close()
         if info:
-            sep = ","
-            print(f" ({count:{sep}} kB downloaded)")
+            print(f" > {count/chunk_size:.2f} MB downloaded")
     except:
         status = False
     return status
@@ -142,7 +142,7 @@ def argsHandle() -> tuple[bool, bool, str, list, list]:
     Args:
         None
     Returns:
-        status: Returns True ig args are OK
+        status: Returns True if args are OK
         fFormat: Returns a string with selected file format
         cList: Returns a list of selected country codes
         rList: Returns a list of selected region codes
@@ -154,7 +154,7 @@ def argsHandle() -> tuple[bool, bool, str, list, list]:
 
     parser = argparse.ArgumentParser(
         prog=sys.argv[0],
-        description="""Program exports a formatted file with dmr-id's
+        description="""Program exports a formatted file with DMR IDs
         based on users criteria. This file can  be imported into a radio,
         like AnyTone D878/D578, as digital contact list""",
         epilog="""Updated version and resources may be found at
@@ -171,7 +171,7 @@ def argsHandle() -> tuple[bool, bool, str, list, list]:
     parser.add_argument(
         "-d",
         "--download",
-        help="download raw dmr database from https://radioid.net",
+        help="download DMR database from https://radioid.net",
         action="store_true",
     )
 
@@ -203,17 +203,19 @@ def argsHandle() -> tuple[bool, bool, str, list, list]:
     args = parser.parse_args()
 
     if len(sys.argv) == 1:
-        print(f"\nPlease try {sys.argv[0]} -h if you need help")
+        print(f"Please try {sys.argv[0]} -h if you need help")
+
     statActive = args.statistics
     downActive = args.download
+
     if downActive:
         if urlExist(DMR_URL):
-            print(f"\nDownloading DMR database {os.path.basename(DMR_URL)}", end="")
+            print(f'Downloading DMR database "{os.path.basename(DMR_URL)}"', end="")
             if not urlLoad(os.path.basename(DMR_URL), DMR_URL, True):
                 print(f"\nProblem downloading {DMR_URL} -> network problems !")
                 sys.exit(1)
         else:
-            print(f"\n{DMR_URL} unreachable -> network problems !")
+            print(f"{DMR_URL} unreachable -> network problems !")
             sys.exit(1)
 
     fFormat = args.format
@@ -227,11 +229,13 @@ def argsHandle() -> tuple[bool, bool, str, list, list]:
         cList = removeConjugate(list(set(args.country)))
 
     if (not regionActive) and (not countryActive):
-        print("\nNo options specified to do anything...")
+        print("No options specified to do anything...")
         status = False
 
+    if regionActive or countryActive:
+        print("Options specified for export of formatted file:")
+
     if regionActive:
-        print("\nOptions specified for export of formatted file:")
         for n in rList:
             if n in DMR_RC.keys():
                 print("-r", n, "include region:", DMR_RC[n])
@@ -262,9 +266,10 @@ def argsHandle() -> tuple[bool, bool, str, list, list]:
             cList.remove(r)
 
     if not fileExist(os.path.basename(DMR_URL)):
-        print(f"\nCan't find local DMR database {os.path.basename(DMR_URL)}")
-        print(f"\nUse -d option to download {os.path.basename(DMR_URL)}")
+        print(f'\nCan\'t find local DMR database "{os.path.basename(DMR_URL)}"')
+        print(f'Use -d option to download "{os.path.basename(DMR_URL)}"')
         status = False
+
     return statActive, status, fFormat, cList, rList
 
 
@@ -317,6 +322,7 @@ def dmrSelection(cList: list, rList: list) -> list[dict]:
     """
     selection: list = []
     dmrDB = jsonLoad(os.path.basename(DMR_URL))
+    print(f'Getting DMR IDs from "{os.path.basename(DMR_URL)}"')
     for i in dmrDB["users"]:
         if regionInclude(i["radio_id"], rList) and not countryExclude(
             i["radio_id"], cList
@@ -341,18 +347,12 @@ def dmrTouchup(data: list) -> list[dict]:
     """
     dataToucup: list = []
     for x in data:
-        x["fname"] = unidecode(x["fname"])
         x["fname"] = x["fname"].title()
-        x["name"] = unidecode(x["name"])
         x["name"] = x["name"].title()
-        x["country"] = unidecode(x["country"])
         x["country"] = x["country"].title()
         x["callsign"] = x["callsign"].upper()
-        x["city"] = unidecode(x["city"])
         x["city"] = x["city"].title()
-        x["surname"] = unidecode(x["surname"])
         x["surname"] = x["surname"].title()
-        x["state"] = unidecode(x["state"])
         x["state"] = x["state"].title()
         dataToucup.append(x)
     return dataToucup
@@ -367,6 +367,28 @@ def dmrStat(data: list):
     for r in range(len(stat)):
         print(f"{stat[r]:9,} IDs from region {r}: {DMR_RC[r]}")
     return None
+
+
+def csvLoad(file: str, mode: str, newl: str, enc: str, delim: str) -> list:
+    """
+    Import csv file rows
+    Args:
+        file: CSV filename
+        mode: CSV file mode
+        newl: CSV newline char
+        enc: CSV file encoding
+        delim: CSV delimiter
+    Returns:
+        List of rows
+    """
+    fileRows = []
+    with open(file, mode, newline=newl, encoding=enc) as csvfile:
+        csvreader = csv.reader(csvfile, delimiter=delim)
+        next(csvreader)  # Skip the header
+        for row in csvreader:
+            fileRows.append(row)  # Get all the rows
+        csvfile.close()
+    return fileRows
 
 
 def dmrExportAnytone(data: list, file: str) -> None:
@@ -395,22 +417,22 @@ def dmrExportAnytone(data: list, file: str) -> None:
 
     for x in data:
         csvRow: list = [
-            x["radio_id"],
-            x["callsign"],
-            x["fname"],
-            x["city"],
-            x["state"],
-            x["country"],
-            "",
-            "Private Call",
-            "None",
+            unidecode(str(x["radio_id"])),
+            unidecode(x["callsign"]),
+            unidecode(x["fname"]),
+            unidecode(x["city"]),
+            unidecode(x["state"]),
+            unidecode(x["country"]),
+            unidecode(""),
+            unidecode("Private Call"),
+            unidecode("None"),
         ]
         csvRows.append(csvRow)
 
     with open(file, "wt", newline="", encoding="utf-8") as csvfile:
         cswriter = csv.writer(csvfile)
         cswriter.writerows(csvRows)
-        print(f"DMR ID file ({file}) was exported with {len(data):,} IDs")
+        print(f'DMR ID file "{file}" was exported with {len(data):,} IDs')
     return None
 
 
@@ -461,7 +483,7 @@ def dmrExportText(data: list, file: str) -> None:
         txtFile.writelines(txtRows)
         txtFile.close()
 
-    print(f"DMRID file ({file}) exported with {len(data):,} IDs")
+    print(f'DMR ID file "{file}" was exported with {len(data):,} IDs')
     return None
 
 
@@ -475,6 +497,7 @@ def main() -> None:
 
     if argsOK and fileExist(os.path.basename(DMR_URL)):
         dmrData = dmrSelection(countryList, regionList)
+
         dmrData = dmrTouchup(dmrData)
 
         if fileFormat[0] == "anytone":

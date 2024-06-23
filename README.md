@@ -18,13 +18,13 @@ All data from radioid.net (users.json) is in UTF-8 format, which is not very rad
 
     pip install unidecode
 
-## Basic use
+## Getting started
 
 ### Example 1
 
-This command shows how to get help using the prgram.
+This command shows how to get help using the prgram:
 
-    >getdmrids.py -h
+    >python getdmrids.py -h
     usage: getdmrids.py [-h] [-s] [-d] [-f {anytone,text}] [-r [REGION ...]]
                     [-c [COUNTRY ...]]
 
@@ -47,9 +47,9 @@ This command shows how to get help using the prgram.
 
 ### Example 2
 
-This command specifies to download an updated raw DMR ID user database, and then create formatted export file for region 2 (Europe). File format will be for default traceiver type (AnyTone D878/D578) and the file will be named "users-anytone.csv".
+This command specifies to download an updated raw DMR ID user database, and then create formatted export file for region 2 (Europe). File format will be for default traceiver type (AnyTone D878/D578) and the file will be named "users-anytone.csv":
 
-    >python3 getdmrids.py -d -r 2
+    >python getdmrids.py -d -r 2
 
     Downloading DMR database users.json (42,597 kB downloaded)
 
@@ -59,9 +59,9 @@ This command specifies to download an updated raw DMR ID user database, and then
 
 ### Example 3
 
-This command specifies to create formatted export file for region 2 (Europe). Country 302 (Canada) will also be added to the collection, but Norway (242) will ble excluded. File format will be for default traceiver type (AnyTone D878/D578) and the file will be named "users-anytone.csv".
+This command specifies to create formatted export file for region 2 (Europe). Country 302 (Canada) will also be added to the collection, but Norway (242) will ble excluded. File format will be for default traceiver type (AnyTone D878/D578) and the file will be named "users-anytone.csv":
 
-    >python3 getdmrids.py -r 2 -c 302 -242
+    >python getdmrids.py -r 2 -c 302 -242
 
     Options specified for export of formatted file:
     -r 2 include region: Europe
@@ -71,9 +71,9 @@ This command specifies to create formatted export file for region 2 (Europe). Co
 
 ### Example 4
 
-This command specifies to create formatted export file for region 1, 2 and 3 with statistics. File format will be for default traceiver type (AnyTone D878/D578) and the file will be named "users-anytone.csv".
+This command specifies to create formatted export file for region 1, 2 and 3 with statistics. File format will be for default traceiver type (AnyTone D878/D578) and the file will be named "users-anytone.csv":
 
-    >python3 getdmrids.py -r 1 2 3 -s
+    >python getdmrids.py -r 1 2 3 -s
 
     Options specified for export of formatted file:
     -r 1 include region: North America and Canada
